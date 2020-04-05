@@ -1,0 +1,9 @@
+env:
+  timestamp: 111111
+
+service_account: test
+
+nodeSelector:
+  environment: dev
+
+sha: a63f24

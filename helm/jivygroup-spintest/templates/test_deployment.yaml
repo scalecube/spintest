@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      serviceAccount: {{ .Values.service_account }}
+      serviceAccountName: {{ .Values.service_account }}
+      nodeSelector:
+{{- range $key, $value := .Values.nodeSelector }}
+  {{ indent 6 $key }}: {{ $value }}
+{{- end }}
+      containers:
+      - name: nginx
+        image: scalecube/nginx:{{ .Values.sha }}
+        ports:
+        - containerPort: 80
+        env:
+{{- range $pkey, $pval := .Values.env }}
+        - name: {{ $pkey }}
+          value: {{ $pval | quote }}
+{{- end }}

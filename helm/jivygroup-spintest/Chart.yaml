@@ -1,0 +1,8 @@
+name: jivygroup-spintest
+version: 0.0.1
+description: Helm chart jivygroup-spintest
+maintainers:
+  - name: Serhii Kolomiiets
+    email: serhii.kolomiiets@jivygroup.com
+appVersion: 0.1
+apiVersion: v1

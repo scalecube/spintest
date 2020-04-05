@@ -1,0 +1,6 @@
+registry:
+  helm: default
+  docker: default
+
+kubernetes:
+  account: scalecube-k8s-account

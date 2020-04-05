@@ -1,0 +1,42 @@
+name: Pipeline spintest
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+
+  helm-package-post:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v1
+    - name: Install Helm package
+      run: |
+        wget -q ${{ secrets.HELM_URL }}/${{ secrets.HELM_TGZ }}
+        tar xzfv ${{ secrets.HELM_TGZ }}
+        PATH=`pwd`/linux-amd64/:$PATH && helm init --client-only
+
+    - name: Check Helm package
+      run: |
+        cd ./helm
+        helm lint ./jivygroup-spintest
+        helm package ./jivygroup-spintest --version 0.0.1-${GITHUB_SHA::6}
+
+    - name: POST Helm package
+      run: |
+        for helm_package in $(find . -name '*.tgz'); do curl -is -u ${{ secrets.HELM_USER}}:${{ secrets.HELM_PASSWORD }} ${{ secrets.HELM_REGISTRY }} --upload-file $helm_package; done 
+
+  robokit-deploy:
+
+    needs:
+      - helm-package-post
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy
+        run: |
+          echo 'Robokit Deploy Triggered.'
